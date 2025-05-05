@@ -1,0 +1,16 @@
+# Ignore all files
+
+# log files
+*.log
+# Temporary files
+*.tmp
+*.temp
+# Backup files
+*.bak
+*.swp
+# session files
+*.session
+*.failsafe
+# Configuration files
+*.conf
+*.cfg
