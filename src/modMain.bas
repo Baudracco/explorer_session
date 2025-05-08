@@ -79,6 +79,12 @@ Public Declare Function SetForegroundWindow Lib "user32" (ByVal hWnd As Long) As
 
 '---
 
+Public Declare Function ShellExecute Lib "shell32.dll" Alias "ShellExecuteA" (ByVal hWnd As Long, ByVal lpOperation As String, ByVal lpFile As String, ByVal lpParameters As String, ByVal lpDirectory As String, ByVal nShowCmd As Long) As Long
+
+Public Const SW_SHOWNORMAL = 1
+
+'---
+
 Public Function ToHumanName(path As String) As String
     Dim pidl As Long
     Dim namePtr As Long
@@ -168,18 +174,40 @@ Public Sub CloseAllWindowsExplorer()
     Dim shellApp As Object
     Dim windows As Object
     Dim item As Object
+    Dim attemptCount As Integer
 
     On Error Resume Next
     Set shellApp = CreateObject("Shell.Application")
-    Set windows = shellApp.windows
-
-    For Each item In windows
-        ' Verificamos si es una ventana del Explorador
-        ' También podrías filtrar por tipo si querés excluir navegadores
-        If Not item Is Nothing Then
-            item.Quit
+    
+    ' Intentar varias veces para asegurar que todas las ventanas se cierren
+    For attemptCount = 1 To 100
+    
+        Set windows = shellApp.windows
+        
+        If windows.Count = 0 Then
+            'Debug.Print "No se encontraron ventanas activas."
+            Exit Sub
         End If
-    Next
+        
+        For Each item In windows
+            If Not item Is Nothing Then
+                ' Verifica si el item es una ventana del Explorador de Windows
+                If InStr(LCase(item.FullName), "explorer.exe") > 0 Then
+                    Debug.Print vbCrLf & "es explorer:", item.FullName
+                
+                    Debug.Print Date & " " & Time
+                    Debug.Print "Cerrando ventana: " & item.LocationURL
+                    item.Quit
+                Else
+                    Debug.Print vbCrLf & "NO es explorer:", item.FullName
+                End If
+                DoEvents ' Deja que el sistema procese otras tareas
+            End If
+        Next
+        
+        DoEvents
+    Next attemptCount
+    
 End Sub
 
 
@@ -354,12 +382,12 @@ On Error GoTo ErrHandler
         Line Input #f, line ' salteamos la primera línea
 
         Do While Not EOF(f)
-        Line Input #f, line
-        If IsShellPathValid(line) Then
-            Shell "explorer.exe """ & line & """", vbNormalFocus
-        End If
-    Loop
-
+            DoEvents
+            Line Input #f, line
+            If IsShellPathValid(line) Then
+                ShellExecute frmMain.hWnd, vbNullString, line, vbNullString, "C:\", SW_SHOWNORMAL
+            End If
+        Loop
     Close #f
     Exit Sub
 ErrHandler:

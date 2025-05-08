@@ -175,6 +175,10 @@ Option Explicit
 Private Sub cmdSave_Click()
     On Error GoTo ErrHandler
     Dim paths As Collection
+    
+    
+    cmdExplorerListRefresh_Click
+    
     Set paths = GetOpenExplorerPaths()
 
     Dim f As Integer
@@ -217,6 +221,7 @@ End Sub
 
 Private Sub cmdCloseAll_Click()
     CloseAllWindowsExplorer
+    cmdExplorerListRefresh_Click
 End Sub
 
 Private Sub cmdDeleteSess_Click()
@@ -231,8 +236,11 @@ End Sub
 
 Private Sub cmdOpenSess_Click()
     If File1.ListCount = 0 Or File1.ListIndex = -1 Then Exit Sub
-        RestorePreviousSession AppPath & File1.List(File1.ListIndex)
+    
+    RestorePreviousSession AppPath & File1.List(File1.ListIndex)
     File1.Refresh
+    
+    cmdExplorerListRefresh_Click
 End Sub
 
 Private Sub cmdExplorerListRefresh_Click()
