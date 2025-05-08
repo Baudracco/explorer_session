@@ -97,7 +97,7 @@ Public Function ToHumanName(path As String) As String
         Exit Function
     End If
 
-    ' Si no es vï¿½lida para el shell, devolvemos error
+    ' Si no es válida para el shell, devolvemos error
     result = SHParseDisplayName(StrPtr(path), 0, pidl, 0, 0)
     If result <> S_OK Or pidl = 0 Then
         ToHumanName = "%%ERROR_NOT_VALID%%"
@@ -259,19 +259,19 @@ Public Function IsValidPath(path As String) As Boolean
 
     invalidChars = "<>""|?*" & Chr(0)  ' barra invertida doblemente escapada
 
-    ' 1. No vacï¿½o
+    ' 1. No vacío
     If Trim(path) = "" Then
         IsValidPath = False
         Exit Function
     End If
 
-    ' 2. Longitud mï¿½xima (Win32)
+    ' 2. Longitud máxima (Win32)
     If Len(path) > 260 Then
         IsValidPath = False
         Exit Function
     End If
 
-    ' 3. Caracteres invï¿½lidos
+    ' 3. Caracteres inválidos
     For i = 1 To Len(invalidChars)
         c = Mid(invalidChars, i, 1)
         Debug.Print c
@@ -287,7 +287,7 @@ Public Function IsValidPath(path As String) As Boolean
         Exit Function
     End If
 
-    ' 4. Nombres reservados (sï¿½lo para archivos o carpetas simples)
+    ' 4. Nombres reservados (sólo para archivos o carpetas simples)
     Dim nombreSolo As String
     nombreSolo = UCase$(Mid$(path, InStrRev(path, "\") + 1))
     
@@ -340,10 +340,10 @@ Public Function WasCleanExit() As Integer
     f = FreeFile
     Open SessionFile For Input As #f
 
-    ' Leer primera lï¿½nea: clean_exit=...
+    ' Leer primera línea: clean_exit=...
     Line Input #f, lineHeader
 
-    ' Buscar la primera ruta vï¿½lida (no vacï¿½a)
+    ' Buscar la primera ruta válida (no vacía)
     ventanaCount = 0
     Do While Not EOF(f) And ventanaCount = 0
         Line Input #f, lineRuta
@@ -353,7 +353,7 @@ Public Function WasCleanExit() As Integer
     Loop
     Close #f
 
-    ' Determinar cï¿½digo de retorno
+    ' Determinar código de retorno
     If InStr(lineHeader, "clean_exit=1") > 0 Then
         WasCleanExit = 2 ' salida limpia
     ElseIf ventanaCount = 0 Then
@@ -379,7 +379,7 @@ On Error GoTo ErrHandler
     
     f = FreeFile
     Open FilePath For Input As #f
-        Line Input #f, line ' salteamos la primera lï¿½nea
+        Line Input #f, line ' salteamos la primera línea
 
         Do While Not EOF(f)
             DoEvents
